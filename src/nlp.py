@@ -4,7 +4,7 @@ from nltk.corpus import stopwords
 from nltk.tokenize import RegexpTokenizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-from graphlab.recommender.item_similarity_recommender import ItemSimilarityRecommender
+import graphlab
 
 
 class Jokes(object):
@@ -26,6 +26,8 @@ class Jokes(object):
 		self.feature_matrix = self.tfidfs
 
 		self.vocabulary = self.vectorizer.vocabulary_
+
+		self.jokes_with_ids = []
 
 	def dim_reduced_cosine_similar(self, joke_number):
 		'''
@@ -49,8 +51,8 @@ class Jokes(object):
 
 	def item_item_similarity(self, joke_number, train_ratings, score_ratings):
 		sf_train_ratings = graphlab.SFrame(train_ratings)
-	    sf_score_ratings = graphlab.SFrame(score_ratings)
-	    new_basic_ratings = score_ratings.copy()
+		sf_score_ratings = graphlab.SFrame(score_ratings)
+		new_basic_ratings = score_ratings.copy()
 		recommender = graphlab.recommender.item_similarity_recommender.create(user_id = 'user_id', 
 										                                     item_id = 'joke_id', 
 										                                     target = 'rating',
@@ -61,7 +63,7 @@ class Jokes(object):
 if __name__ == '__main__':
 	what_a_joke = Jokes()
 	what_a_joke.fit()
-	what_a_joke.similar(1)
+	#what_a_joke.item_item_similarity(1)
 
 '''
 tokenizer = RegexpTokenizer(r'\w+')
