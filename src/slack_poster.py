@@ -35,4 +35,5 @@ if __name__ == "__main__":
         "It should provide ratings",
         " for 522169 entries (yours=%s)." % sample_sub.shape[0]])
     else:
-        rc.report_to_slack(sample_sub)
+        #rc.report_to_slack(sample_sub)
+        print rc.score(sample_sub)
