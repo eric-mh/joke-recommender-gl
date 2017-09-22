@@ -27,5 +27,4 @@ sample_ratings = pd.read_csv('data/dont_use.csv')
 
 sample_ratings['rating'] = sample_ratings['rating'].apply(lambda x: (x<0)*(-10) or (x>0)*10)
 
-
 sample_ratings.to_csv('data/worst_pred.csv')
