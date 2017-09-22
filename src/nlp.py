@@ -5,6 +5,8 @@ from nltk.tokenize import RegexpTokenizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import graphlab
+from sklearn.decomposition import PCA
+from nmf import *
 
 
 class Jokes(object):
@@ -29,7 +31,7 @@ class Jokes(object):
 
 		self.jokes_with_ids = []
 
-	def dim_reduced_cosine_similar(self, joke_number):
+	def get_cosine_sim_matrix(self):
 		'''
 		Can only be called after self.fit() has been called.
 		INPUTS: 
@@ -37,19 +39,21 @@ class Jokes(object):
 		OUTPUTS: 
 			order_of_jokes: len(order_of_jokes) = len(jokes) and is a list of indices in order of similarity to jokes[joke_index]
 		'''
-		joke_number -= 1
-		cosine_sims = cosine_similarity(self.tfidfs)
-		import pdb
-		pdb.set_trace()
+		design = np.dot(self.W, self.H)
+		return cosine_similarity(design)
 
 	def reduce_dims(self, num_dims):
 		'''
 		INPUTS: 
 			num_dims: the number of dimensions to be reduced to. 
 		OUTPUTS: 
-			
+			feature_matrix: a len(jokes) x num_dims array
 		'''
-		
+		features = self.tfidfs.toarray()
+		features = np.nan_to_num(features)
+		import pdb
+		pdb.set_trace()
+		self.W, self.H, _ = calc_nmf(features, rank = 20)
 
 	def item_item_similarity(self, joke_number, train_ratings, score_ratings):
 		sf_train_ratings = graphlab.SFrame(train_ratings)
@@ -66,6 +70,8 @@ if __name__ == '__main__':
 	what_a_joke = Jokes()
 	what_a_joke.fit()
 	#what_a_joke.item_item_similarity(1)
+	what_a_joke.reduce_dims(200)
+	cosine_sims = what_a_joke.get_cosine_sim_matrix()
 
 '''
 tokenizer = RegexpTokenizer(r'\w+')
