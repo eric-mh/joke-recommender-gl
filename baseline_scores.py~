@@ -1,0 +1,22 @@
+import pandas as pd
+from matFac import *
+train_ratings = pd.read_csv('data/ratings.dat', sep="\t")
+score_ratings = pd.read_csv('data/dont_use.csv')
+
+def baseline_predictions():
+    new_ratings_worst = score_ratings.copy()
+    new_ratings_best = score_ratings.copy()
+    new_ratings_base = score_ratings.copy()
+
+    # Create worst possible ratings
+    new_ratings_worst['rating'] = -10
+    new_ratings_worst.to_csv('predictions/worst_pred.csv')
+
+    # Create best possible ratings
+    new_ratings_best.to_csv('predictions/best_pred.csv')
+
+    # Create baseline ratings with predicted mean
+    baseline = train_ratings['rating'].mean()
+    new_ratings_base['rating'] = baseline
+    new_ratings_base.to_csv('predictions/base_pred.csv')
+

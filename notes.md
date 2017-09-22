@@ -16,5 +16,8 @@
 
 
 #Ratings:
-  - Baseline worst score: 4.35911030352
+  - Baseline worst score: 1.70921315704
   - Baseline best score: 5.98087870889
+  - Baseline random score: # empty on purpose #
+
+  - Matrix Factorization k=2 : 3.08144508954
