@@ -46,8 +46,10 @@ class Jokes(object):
 		'''
 		INPUTS: 
 			num_dims: the number of dimensions to be reduced to. 
+		OUTPUTS: 
+			
 		'''
-		pass
+		
 
 	def item_item_similarity(self, joke_number, train_ratings, score_ratings):
 		sf_train_ratings = graphlab.SFrame(train_ratings)
