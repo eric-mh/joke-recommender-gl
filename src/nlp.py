@@ -64,12 +64,22 @@ class Jokes(object):
 		recommender.fit()
 		return recommender.predict(sf_score_ratings)
 
+	def joke_types(self):
+		joke_order_per_cat = np.argsort(self.W.T)
+		self.important_jokes_per_cat = []
+		for order in joke_order_per_cat:
+			mask = order[::-1][:10]
+			import pdb
+			pdb.set_trace()
+			self.important_jokes_per_cat.append(self.jokes[mask])
+
 if __name__ == '__main__':
 	what_a_joke = Jokes()
 	what_a_joke.fit()
 	#what_a_joke.item_item_similarity(1)
-	what_a_joke.reduce_dims(200)
+	what_a_joke.reduce_dims(4)
 	cosine_sims = what_a_joke.get_cosine_sim_matrix()
+	what_a_joke.joke_types()
 
 '''
 tokenizer = RegexpTokenizer(r'\w+')
