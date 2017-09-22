@@ -13,9 +13,9 @@ class Jokes(object):
 
 	def __init__(self):
 		pass
-	
+
 	def fit(self):
-		filename = "data/jokes.dat"
+		filename = "../data/jokes.dat"
 		open_data_file = open(filename, "r")
 		soup = BeautifulSoup(open_data_file.read(), 'html.parser')
 
@@ -34,9 +34,9 @@ class Jokes(object):
 	def get_cosine_sim_matrix(self):
 		'''
 		Can only be called after self.fit() has been called.
-		INPUTS: 
+		INPUTS:
 			joke_index: the index of the joke we'd like similar jokes to.  Corresponds to joke number, not index of joke
-		OUTPUTS: 
+		OUTPUTS:
 			order_of_jokes: len(order_of_jokes) = len(jokes) and is a list of indices in order of similarity to jokes[joke_index]
 		'''
 		design = np.dot(self.W, self.H)
@@ -44,23 +44,21 @@ class Jokes(object):
 
 	def reduce_dims(self, num_dims):
 		'''
-		INPUTS: 
-			num_dims: the number of dimensions to be reduced to. 
-		OUTPUTS: 
+		INPUTS:
+			num_dims: the number of dimensions to be reduced to.
+		OUTPUTS:
 			feature_matrix: a len(jokes) x num_dims array
 		'''
 		features = self.tfidfs.toarray()
 		features = np.nan_to_num(features)
-		import pdb
-		pdb.set_trace()
 		self.W, self.H, _ = calc_nmf(features, rank = 20)
 
 	def item_item_similarity(self, joke_number, train_ratings, score_ratings):
 		sf_train_ratings = graphlab.SFrame(train_ratings)
 		sf_score_ratings = graphlab.SFrame(score_ratings)
 		new_basic_ratings = score_ratings.copy()
-		recommender = graphlab.recommender.item_similarity_recommender.create(user_id = 'user_id', 
-										                                     item_id = 'joke_id', 
+		recommender = graphlab.recommender.item_similarity_recommender.create(user_id = 'user_id',
+										                                     item_id = 'joke_id',
 										                                     target = 'rating',
 										                                     similarity_type = 'cosine')
 		recommender.fit()

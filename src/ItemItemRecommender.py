@@ -13,6 +13,7 @@ class ItemItemRecommender(object):
         '''
         self.jokes = Jokes()
         self.jokes.fit()
+        self.jokes.reduce_dims(200)
 
         self.neighborhood_size = neighborhood_size
         self.mat = None
@@ -46,7 +47,7 @@ class ItemItemRecommender(object):
         self.neighborhoods = least_to_most_sim_indexes[:, -self.neighborhood_size:]
 
 
-    def pred_one_user(self, user_id, timing=False):
+    def pred_one_user(self, user_id, joke_id, timing=False):
         '''
         Accept user id as arg. Return the predictions for a single user.
 
@@ -57,7 +58,8 @@ class ItemItemRecommender(object):
         start_time = time()
 
         n_items = self.mat.shape[1]
-        items_rated_by_this_user = self.mat[user_id].nonzero()[1]
+        items_rated_by_this_user = self.mat[user_id]
+        items_rated_by_this_user = items_rated_by_this_user.nonzero()[1]
         # Just initializing so we have somewhere to put rating preds
         output = np.zeros(n_items)
         for item_to_rate in range(n_items):
@@ -70,9 +72,9 @@ class ItemItemRecommender(object):
                 self.items_sim[item_to_rate, relevant_items].sum()
 
         if timing:
-            return np.nan_to_num(output), (time() - start_time)
+            return np.nan_to_num(output[joke_id]), (time() - start_time)
         else:
-            return np.nan_to_num(output)
+            return np.nan_to_num(output[joke_id])
 
 
     def pred_all_users(self, timing=False):
@@ -119,6 +121,8 @@ class ItemItemRecommender(object):
 
 
 
+
+
 # if __name__ == "__main__":
 
 
@@ -126,16 +130,27 @@ sample_ratings = pd.read_csv('../data/ratings.dat', sep="\t")
 
 highest_user_id = sample_ratings.user_id.max()
 highest_joke_id = sample_ratings.joke_id.max()
-
 ratings_as_mat = sparse.lil_matrix((highest_user_id, highest_joke_id))
-for _, row in sample_ratings.iterrows():
+
+sample_matrix = sample_ratings.as_matrix()
+for row in sample_matrix:
     # subtract 1 from id's due to match 0 indexing
-    ratings_as_mat[row.user_id - 1, row.joke_id - 1] = row.rating
+    ratings_as_mat[row[0] - 1, row[1] - 1] = row[2]
+
 
 model = ItemItemRecommender(50)
-model.fit(sample_ratings)
+model.fit(ratings_as_mat)
 
-model.pred_one_user(34888)
+
+test_data = pd.read_csv('../data/dont_use.csv')
+predictions = []
+for _, row in test_data.iterrows():
+    user_id, joke_id = int(row['user_id']), int(row['joke_id'])
+    pred_y = model.pred_one_user(user_id, joke_id)
+    predictions.append([user_id, joke_id, pred_y])
+
+predictions
+#save_csv
 
 
 
