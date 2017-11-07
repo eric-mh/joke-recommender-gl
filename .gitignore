@@ -1,1 +1,9 @@
 *DS_Store*
+*.pyc
+*.py#
+*.py~
+
+predictions/
+data/
+u.item
+u.data
